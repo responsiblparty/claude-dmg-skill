@@ -1,0 +1,175 @@
+# /dmg — Claude Code skill for persistent memory + auto-sync
+
+A Claude Code slash command that ends every session by committing dirty repos, refreshing documentation, and updating a persistent memory system — so the next session starts with full context.
+
+`/dmg` = **d**ocumentation, **m**emories, **g**it.
+
+---
+
+## The problem
+
+When you build things with Claude Code, context resets every session. You re-explain your project layout. You re-describe decisions you already made. Claude doesn't know what changed yesterday.
+
+The other problem: after a productive session you have uncommitted work, stale docs, and no record of what you learned.
+
+`/dmg` solves both. One command cleans up the session and primes the next one.
+
+---
+
+## What it does
+
+**1. Git** — finds every repo touched during the session (including nested repos), commits anything dirty with a message explaining *why* the change was made, and appends the Claude Code co-author line.
+
+**2. Docs** — updates whatever operational documentation went stale: README files, service tables, architecture docs. New projects and services get added to the right tables automatically.
+
+**3. Memory** — updates a set of structured markdown files that persist across sessions. The next time you open Claude Code, it reads the index and knows your projects, your lessons learned, your preferences, and your infrastructure — without you re-explaining anything.
+
+At the end it shows a clean `git status` across all repos as proof.
+
+---
+
+## Setup
+
+### 1. Install Claude Code
+
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+### 2. Install the skill
+
+```bash
+mkdir -p ~/.claude/skills/dmg
+cp skills/dmg/SKILL.md ~/.claude/skills/dmg/SKILL.md
+```
+
+Claude Code loads any skill files found in `~/.claude/skills/` and makes them available as slash commands. After copying the file, type `/dmg` in any Claude Code session.
+
+### 3. Set up the memory folder
+
+```bash
+# Pick a project name — usually matches your working directory
+mkdir -p ~/.claude/projects/my-project/memory
+cp memory/MEMORY.md ~/.claude/projects/my-project/memory/MEMORY.md
+```
+
+Start writing memory files as you go. Use the examples in `memory/examples/` as a starting point.
+
+### 4. Wire up CLAUDE.md
+
+Copy `CLAUDE.md` to your project root (or add its contents to an existing one). This tells Claude to read the memory index at session start.
+
+```bash
+cp CLAUDE.md ~/my-project/CLAUDE.md
+```
+
+### 5. Adapt the skill to your setup
+
+Open `~/.claude/skills/dmg/SKILL.md` and edit the instructions to match your actual repo layout and doc conventions. The more specific you make it, the more reliably it runs.
+
+At minimum, tell it:
+- Which directories are their own git repos vs. tracked by a parent
+- Which documentation files to keep current
+- Where your memory folder lives
+
+### 6. (Optional) Autocommit hook
+
+Add a hook in Claude Code settings to commit the memory folder every few minutes. This prevents losing memory updates if a session crashes.
+
+In your Claude Code settings (`~/.claude/settings.json`):
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/skills/dmg/autocommit.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+`autocommit.sh` (create at `~/.claude/skills/dmg/autocommit.sh`):
+
+```bash
+#!/bin/bash
+MEMORY_DIR="$HOME/.claude/projects/my-project/memory"
+cd "$MEMORY_DIR" || exit 0
+git diff --quiet && exit 0
+git add -A && git commit -m "auto: $(date '+%Y-%m-%d %H:%M:%S')" --quiet
+```
+
+---
+
+## Memory file format
+
+Each memory file is a markdown file with YAML frontmatter:
+
+```markdown
+---
+name: short-kebab-case-slug
+description: "one line — used to decide relevance when scanning the index"
+metadata:
+  type: project   # project | feedback | user | reference
+---
+
+Content here. For feedback/lessons, use:
+
+The rule or behavior.
+
+**Why:** The reason — often a past incident or strong preference.
+**How to apply:** When and where this kicks in.
+```
+
+The `MEMORY.md` index has one line per file:
+
+```markdown
+- [Title](filename.md) — one-line hook matching the description field
+```
+
+---
+
+## Memory types
+
+| Type | What goes here |
+|------|---------------|
+| `project` | Current state, file paths, open threads, architecture decisions |
+| `feedback` | Lessons learned — what to do/avoid, and why |
+| `user` | Your role, expertise, preferences, how you like to work |
+| `reference` | Pointers to external resources: dashboards, docs, tickets |
+
+---
+
+## Usage
+
+At the end of any session:
+
+```
+/dmg
+```
+
+Claude will scan every repo touched during the session, commit dirty work, update your docs, and sync the memory files. Takes 1–3 minutes depending on how much changed.
+
+You can also trigger it mid-session if you want to checkpoint before switching tasks.
+
+---
+
+## Tips
+
+- **Be specific in SKILL.md.** Generic instructions produce generic results. List your actual repo paths and doc file names.
+- **Memory compounds over time.** The first session it's minimal. After a few weeks it knows your entire stack.
+- **Feedback memories are the highest-value type.** When Claude makes a mistake or you correct its approach, save that as a feedback memory immediately. It will never make the same mistake again.
+- **Keep the index short.** MEMORY.md is loaded every session — if it gets long, Claude spends tokens scanning it. One tight line per file.
+
+---
+
+## License
+
+MIT
