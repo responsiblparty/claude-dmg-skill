@@ -65,11 +65,17 @@ Copy `CLAUDE.md` to your project root (or add its contents to an existing one). 
 cp CLAUDE.md ~/my-project/CLAUDE.md
 ```
 
-### 5. Adapt the skill to your setup
+### 5. Configure the skill for your setup
 
-Open `~/.claude/skills/dmg/SKILL.md` and edit the instructions to match your actual repo layout and doc conventions. The more specific you make it, the more reliably it runs.
+The skill needs to know your repo layout and doc conventions. The easiest way is to let Claude discover them:
 
-At minimum, tell it:
+```
+/dmg --init
+```
+
+Claude will run a discovery script, show you what it found (repos, doc files, memory folders), ask four quick questions, and write a tailored `SKILL.md` for your setup. Takes about a minute.
+
+**Or configure manually:** open `~/.claude/skills/dmg/SKILL.md` and edit the instructions to match your actual paths and doc file names. At minimum, tell it:
 - Which directories are their own git repos vs. tracked by a parent
 - Which documentation files to keep current
 - Where your memory folder lives

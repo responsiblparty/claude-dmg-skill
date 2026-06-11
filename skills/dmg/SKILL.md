@@ -1,7 +1,36 @@
 ---
 name: dmg
-description: Sync documentation, memories, and git for everything touched this session — commit all dirty repos, refresh project docs, update memory files + MEMORY.md index, then show git-clean proof.
+description: Sync documentation, memories, and git for everything touched this session — commit all dirty repos, refresh project docs, update memory files + MEMORY.md index, then show git-clean proof. Use /dmg --init on first run to generate a tailored SKILL.md for your setup.
 ---
+
+## If invoked with `--init`
+
+Run the initialization flow. This replaces the current SKILL.md with a version tailored to the user's actual setup.
+
+1. **Run the discovery script** and parse its output:
+   ```
+   bash ~/.claude/skills/dmg/discover.sh
+   ```
+
+2. **Present findings** grouped clearly:
+   - Standalone repos (no parent repo) — list path and doc files found
+   - Nested repos (parent also a git repo) — list with parent noted
+   - Memory folders found (MEMORY.md paths)
+   - Whether a SKILL.md already exists
+
+3. **Ask the user four things** (present as a numbered list, wait for a single reply):
+   - "Which repos should `/dmg` commit?" — default: all found; user can exclude or add paths
+   - "For which repos should `/dmg` refresh docs?" — default: ones with doc files; list them
+   - "Where is your memory folder?" — default: first MEMORY.md found, or ask if none
+   - "Anything else to include?" — catch-all for custom hooks, extra paths, or conventions
+
+4. **Write a new SKILL.md** to `~/.claude/skills/dmg/SKILL.md` based on the answers. Model it on the default template below but replace the generic placeholders with the user's actual paths and doc file names. Be specific — list each repo by absolute path, each doc file by name. Confirm the path before writing.
+
+5. **Confirm completion**: show the written SKILL.md and say "Run `/dmg` to test it."
+
+---
+
+## Normal invocation (no args)
 
 Bring documentation, memories, and git up to date for all work done this session. Do not ask questions — verify each item and fix what's stale:
 
