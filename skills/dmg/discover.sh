@@ -2,6 +2,8 @@
 # discover.sh — scan for git repos and doc conventions; emit JSON for /dmg --init
 set -euo pipefail
 
+command -v jq >/dev/null 2>&1 || { echo '{"error":"jq not found — install it first: https://jqlang.org/download/"}'; exit 1; }
+
 MAXDEPTH=5
 NAMED_DOCS=("README.md" "CLAUDE.md" "AGENTS.md")
 GLOB_DOCS=("AGENTS-*.md")
