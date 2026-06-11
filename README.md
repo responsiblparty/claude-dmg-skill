@@ -175,7 +175,7 @@ You can also trigger it mid-session if you want to checkpoint before switching t
 
 - **Be specific in SKILL.md.** Generic instructions produce generic results. List your actual repo paths and doc file names.
 - **Memory compounds over time.** The first session it's minimal. After a few weeks it knows your entire stack.
-- **Feedback memories are the highest-value type.** When Claude makes a mistake or you correct its approach, save that as a feedback memory immediately. It will never make the same mistake again.
+- **Feedback memories are the highest-value type.** When Claude makes a mistake or you correct its approach, save that as a feedback memory immediately. It is far less likely to make the same mistake again.
 - **Keep the index short.** MEMORY.md is loaded every session — if it gets long, Claude spends tokens scanning it. One tight line per file.
 
 ---
