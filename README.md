@@ -14,7 +14,7 @@ The other problem: after a productive session you have uncommitted work, stale d
 
 `/dmg` solves both. One command cleans up the session and primes the next one.
 
-The highest-leverage thing it does: when Claude makes a mistake or you correct its approach, `/dmg` saves that as a **feedback memory**. Claude will never make the same mistake twice. Most context loss between sessions is silent — you don't notice until Claude repeats a bad call. Feedback memories are what break that cycle.
+The highest-leverage thing it does: when Claude makes a mistake or you correct its approach, `/dmg` saves that as a **feedback memory**. Claude is far less likely to repeat the same mistake. Most context loss between sessions is silent — you don't notice until Claude repeats a bad call. Feedback memories are what break that cycle.
 
 ---
 
@@ -112,7 +112,7 @@ In your Claude Code settings (`~/.claude/settings.json`):
 #!/bin/bash
 MEMORY_DIR="$HOME/.claude/projects/my-project/memory"
 cd "$MEMORY_DIR" || exit 0
-git diff --quiet && exit 0
+[[ -z $(git status --porcelain) ]] && exit 0
 git add -A && git commit -m "auto: $(date '+%Y-%m-%d %H:%M:%S')" --quiet
 ```
 
