@@ -8,7 +8,7 @@
 
 ## Memory
 
-Read `memory/MEMORY.md` at session start for persistent context across conversations.
+Read `~/.claude/projects/YOUR-PROJECT/memory/MEMORY.md` at session start for persistent context across conversations. Replace `YOUR-PROJECT` with the name you used in setup step 3.
 
 When you learn something worth keeping — a lesson, a project detail, a preference — save it to the appropriate memory file and update the index. Use `/dmg` at the end of sessions to sync everything.
 

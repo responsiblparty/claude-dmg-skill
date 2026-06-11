@@ -53,6 +53,12 @@ Claude Code loads any skill files found in `~/.claude/skills/` and makes them av
 # Pick a project name — usually matches your working directory
 mkdir -p ~/.claude/projects/my-project/memory
 cp memory/MEMORY.md ~/.claude/projects/my-project/memory/MEMORY.md
+
+# Initialize as a git repo so the autocommit hook has somewhere to commit
+cd ~/.claude/projects/my-project/memory
+git init
+git add MEMORY.md
+git commit -m "init memory"
 ```
 
 Start writing memory files as you go. Use the examples in `memory/examples/` as a starting point.
@@ -86,6 +92,8 @@ Claude will run a discovery script, show you what it found (repos, doc files, me
 
 If you want continuous protection between invocations, add a hook that commits the memory folder automatically. This is the safety net layer; `/dmg` is the cleanup pass. You need both if you want crash safety.
 
+The hook fires after every tool call (not on a timer), so the script debounces itself — it skips if the last commit was less than 5 minutes ago.
+
 In your Claude Code settings (`~/.claude/settings.json`):
 
 ```json
@@ -113,6 +121,8 @@ In your Claude Code settings (`~/.claude/settings.json`):
 MEMORY_DIR="$HOME/.claude/projects/my-project/memory"
 cd "$MEMORY_DIR" || exit 0
 [[ -z $(git status --porcelain) ]] && exit 0
+last=$(git log -1 --format=%ct 2>/dev/null || echo 0)
+[[ $(( $(date +%s) - last )) -lt 300 ]] && exit 0
 git add -A && git commit -m "auto: $(date '+%Y-%m-%d %H:%M:%S')" --quiet
 ```
 

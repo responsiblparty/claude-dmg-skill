@@ -22,7 +22,11 @@ repo_doc_files() {
   done
   shopt -u nullglob
   [[ -d "$dir/docs" ]] && found+=("docs/")
-  printf '%s\n' "${found[@]}" | sort -u | jq -R . | jq -s .
+  if [[ ${#found[@]} -eq 0 ]]; then
+    echo "[]"
+  else
+    printf '%s\n' "${found[@]}" | sort -u | jq -R . | jq -s .
+  fi
 }
 
 parent_repo() {

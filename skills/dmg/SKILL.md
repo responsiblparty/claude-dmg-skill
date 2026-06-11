@@ -24,7 +24,7 @@ Run the initialization flow. This replaces the current SKILL.md with a version t
    - "Where is your memory folder?" — default: first MEMORY.md found, or ask if none
    - "Anything else to include?" — catch-all for custom hooks, extra paths, or conventions
 
-4. **Write a new SKILL.md** to `~/.claude/skills/dmg/SKILL.md` based on the answers. Model it on the default template below but replace the generic placeholders with the user's actual paths and doc file names. Be specific — list each repo by absolute path, each doc file by name. Confirm the path before writing.
+4. **Write a new SKILL.md** to `~/.claude/skills/dmg/SKILL.md` based on the answers. Start from the full current contents of this file — keep the `## If invoked with --init` section verbatim at the top (re-init must remain available after first use), then replace only the "Normal invocation" section's generic placeholders with the user's actual paths and doc file names. Be specific — list each repo by absolute path, each doc file by name. Confirm the path before writing.
 
 5. **Confirm completion**: show the written SKILL.md and say "Run `/dmg` to test it."
 
@@ -36,7 +36,7 @@ Bring documentation, memories, and git up to date for all work done this session
 
 1. **Git** — for every directory touched this session, find its repo (`git status`). Watch for nested repos: the root server/monorepo may have individual project dirs that are their own git repos — a file can be ignored in the parent and tracked in the child, or vice versa. Commit anything dirty with a descriptive message explaining *why* the change was made, not just what changed. End commit messages with the Claude Code co-author line:
    ```
-   Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+   Co-Authored-By: Claude Code <noreply@anthropic.com>
    ```
 
 2. **Documentation** — update what the changes made stale:
