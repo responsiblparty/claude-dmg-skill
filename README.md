@@ -14,6 +14,8 @@ The other problem: after a productive session you have uncommitted work, stale d
 
 `/dmg` solves both. One command cleans up the session and primes the next one.
 
+The highest-leverage thing it does: when Claude makes a mistake or you correct its approach, `/dmg` saves that as a **feedback memory**. Claude will never make the same mistake twice. Most context loss between sessions is silent — you don't notice until Claude repeats a bad call. Feedback memories are what break that cycle.
+
 ---
 
 ## What it does
@@ -74,7 +76,9 @@ At minimum, tell it:
 
 ### 6. (Optional) Autocommit hook
 
-Add a hook in Claude Code settings to commit the memory folder every few minutes. This prevents losing memory updates if a session crashes.
+`/dmg` is a **manual trigger** — you invoke it and it commits. A session crash before you run `/dmg` means uncommitted memory updates are lost, the same as any workflow without autosave.
+
+If you want continuous protection between invocations, add a hook that commits the memory folder automatically. This is the safety net layer; `/dmg` is the cleanup pass. You need both if you want crash safety.
 
 In your Claude Code settings (`~/.claude/settings.json`):
 
