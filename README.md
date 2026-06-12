@@ -126,6 +126,12 @@ last=$(git log -1 --format=%ct 2>/dev/null || echo 0)
 git add -A && git commit -m "auto: $(date '+%Y-%m-%d %H:%M:%S')" --quiet
 ```
 
+### 7. (Optional) Host config versioning
+
+`/dmg` can also snapshot host-level config files into a tracked `host-config/` directory in a repo you choose. Typical snapshots include `~/.claude/settings.json`, `crontab -l` output, and other tool configs that are rewritten by their owning applications. This is copy-based on purpose: many tools save config atomically by writing a replacement file and renaming it into place, which can silently flatten a symlink into a regular file outside your repo. The crontab snapshot is also a restore source with `crontab host-config/crontab.txt`.
+
+This is opt-in. Enable it during `/dmg --init`, or manually edit `~/.claude/skills/dmg/SKILL.md` and fill in the host-config repo, copied config list, and optional `~/CLAUDE.md` symlink guard if you use that setup.
+
 ---
 
 ## Memory file format
